@@ -28,12 +28,14 @@ export function getSearchAndOutput(ingredient, title) {
     let foodPromise = Promise.resolve(getIngredients(ingredient, title))
     foodPromise.then((jsonObj) => {
         const foodObject = transformRecipe(jsonObj);
-        document.getElementById("resultsTable").innerHTML = `
+        for (let entry in foodObject) {
+            document.getElementById("resultsTable").innerHTML += `
           <tr>
-            <td>${foodObject.title}</td>
-            <td>${foodObject.ingredients}</td>          
+            <td>${foodObject[entry].title}</td>
+            <td>${foodObject[entry].ingredients}</td>          
           </tr>       
         `;
+        }
         document.getElementById("ingredientSearch").placeholder = "Enter a ingredient";
         document.getElementById("searchQuery").placeholder = "Enter a food title";
 
@@ -42,12 +44,12 @@ export function getSearchAndOutput(ingredient, title) {
 
 function transformRecipe(jsonFoodObj) {
     const foodObject = {};
-
-    for (let results in jsonFoodObj) {
-        for (let entry in results) {
-            foodObject.title += jsonFoodObj.title;
-            foodObject.ingredients += jsonFoodObj.ingredients;
+    const finalFood = [];
+    foodObject.results = jsonFoodObj.results;
+    for (let entry in foodObject) {
+        for (let key in foodObject[entry]) {
+            finalFood.push(foodObject[entry][key]);
         }
     }
-    return foodObject;
+    return finalFood;
 }
